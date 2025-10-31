@@ -1,5 +1,3 @@
-"""Конфигурация pytest и фикстуры для тестов"""
-
 import pytest
 import allure
 from selenium import webdriver
@@ -38,11 +36,7 @@ class DriverFactory:
 
     @staticmethod
     def get_driver(browser_name):
-        """
-        Получение драйвера по имени браузера
-        :param browser_name: название браузера (chrome, firefox)
-        :return: WebDriver instance
-        """
+
         drivers = {
             "chrome": DriverFactory.create_chrome_driver,
             "firefox": DriverFactory.create_firefox_driver,
@@ -109,10 +103,7 @@ def pytest_runtest_makereport(item, call):
 
 @pytest.fixture(scope="function")
 def drag_and_drop_js():
-    """
-    JavaScript функция для drag-and-drop.
-    Необходима для корректной работы в Firefox.
-    """
+
     return """
     function simulateDragDrop(sourceNode, destinationNode) {
         var EVENT_TYPES = {

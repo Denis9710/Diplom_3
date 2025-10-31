@@ -1,5 +1,3 @@
-"""Базовый класс для всех страниц"""
-
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import allure
@@ -95,13 +93,7 @@ class BasePage:
 
     @allure.step("Выполнить drag and drop через JavaScript")
     def drag_and_drop_js(self, source_locator, target_locator, js_script):
-        """
-        Выполнить drag and drop с использованием JavaScript
-        Необходимо для корректной работы в Firefox
-        :param source_locator: локатор элемента источника
-        :param target_locator: локатор элемента назначения
-        :param js_script: JavaScript код для drag and drop
-        """
+
         source = self.find_element(source_locator)
         target = self.find_element(target_locator)
         self.driver.execute_script(js_script, source, target)

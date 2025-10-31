@@ -1,5 +1,3 @@
-"""Тестовые данные для автотестов Stellar Burgers"""
-
 import random
 import string
 
