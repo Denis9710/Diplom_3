@@ -1,3 +1,5 @@
+"""Page Object для модального окна ингредиента"""
+
 import allure
 from pages.base_page import BasePage
 from locators.ingredient_modal_locators import IngredientModalLocators

@@ -1,6 +1,61 @@
+"""Конфигурация pytest и фикстуры для тестов"""
+
 import pytest
 import allure
-from driver_factory import DriverFactory
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.firefox import GeckoDriverManager
+
+
+class DriverFactory:
+    """Фабрика для создания драйверов браузеров"""
+
+    @staticmethod
+    def create_chrome_driver():
+        """Создание Chrome драйвера с настройками"""
+        options = webdriver.ChromeOptions()
+        options.add_argument("--window-size=1920,1080")
+        options.add_argument("--disable-blink-features=AutomationControlled")
+        driver = webdriver.Chrome(
+            service=ChromeService(ChromeDriverManager().install()),
+            options=options,
+        )
+        return driver
+
+    @staticmethod
+    def create_firefox_driver():
+        """Создание Firefox драйвера с настройками"""
+        options = webdriver.FirefoxOptions()
+        options.add_argument("--width=1920")
+        options.add_argument("--height=1080")
+        driver = webdriver.Firefox(
+            service=FirefoxService(GeckoDriverManager().install()),
+            options=options,
+        )
+        return driver
+
+    @staticmethod
+    def get_driver(browser_name):
+        """
+        Получение драйвера по имени браузера
+        :param browser_name: название браузера (chrome, firefox)
+        :return: WebDriver instance
+        """
+        drivers = {
+            "chrome": DriverFactory.create_chrome_driver,
+            "firefox": DriverFactory.create_firefox_driver,
+        }
+
+        driver_creator = drivers.get(browser_name.lower())
+        if not driver_creator:
+            raise ValueError(
+                f"Браузер '{browser_name}' не поддерживается. "
+                f"Доступные браузеры: {', '.join(drivers.keys())}"
+            )
+
+        return driver_creator()
 
 
 def pytest_addoption(parser):
@@ -29,7 +84,7 @@ def driver(request, browser_name):
     driver = DriverFactory.get_driver(browser_name)
 
     driver.implicitly_wait(10)
-    # Убираем maximize_window - уже задано через опции
+    driver.maximize_window()
 
     yield driver
 
@@ -53,31 +108,55 @@ def pytest_runtest_makereport(item, call):
 
 
 @pytest.fixture(scope="function")
-def user_with_order():
-    """Фикстура для создания пользователя с заказом"""
-    from api_helpers import StellarBurgersAPI
-    from data import TestData
+def drag_and_drop_js():
+    """
+    JavaScript функция для drag-and-drop.
+    Необходима для корректной работы в Firefox.
+    """
+    return """
+    function simulateDragDrop(sourceNode, destinationNode) {
+        var EVENT_TYPES = {
+            DRAG_END: 'dragend',
+            DRAG_START: 'dragstart',
+            DROP: 'drop'
+        }
 
-    api = StellarBurgersAPI()
+        function createCustomEvent(type) {
+            var event = new CustomEvent("CustomEvent")
+            event.initCustomEvent(type, true, true, null)
+            event.dataTransfer = {
+                data: {
+                },
+                setData: function(type, val) {
+                    this.data[type] = val
+                },
+                getData: function(type) {
+                    return this.data[type]
+                }
+            }
+            return event
+        }
 
-    # Генерируем данные пользователя
-    user_data = TestData.generate_user_data()
+        function dispatchEvent(node, type, event) {
+            if (node.dispatchEvent) {
+                return node.dispatchEvent(event)
+            }
+            if (node.fireEvent) {
+                return node.fireEvent("on" + type, event)
+            }
+        }
 
-    # Создаём пользователя
-    response = api.create_user(user_data)
-    assert (
-        response.status_code == 200
-    ), f"Не удалось создать пользователя: {response.text}"
+        var event = createCustomEvent(EVENT_TYPES.DRAG_START)
+        dispatchEvent(sourceNode, EVENT_TYPES.DRAG_START, event)
 
-    # Получаем токен
-    access_token = response.json().get("accessToken")
+        var dropEvent = createCustomEvent(EVENT_TYPES.DROP)
+        dropEvent.dataTransfer = event.dataTransfer
+        dispatchEvent(destinationNode, EVENT_TYPES.DROP, dropEvent)
 
-    yield {"user_data": user_data, "api": api, "token": access_token}
+        var dragEndEvent = createCustomEvent(EVENT_TYPES.DRAG_END)
+        dragEndEvent.dataTransfer = event.dataTransfer
+        dispatchEvent(sourceNode, EVENT_TYPES.DRAG_END, dragEndEvent)
+    }
 
-    # Удаляем пользователя после теста
-    if access_token:
-        api.delete_user(access_token)
-
-        
-
-        
+    simulateDragDrop(arguments[0], arguments[1]);
+    """
