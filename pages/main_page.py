@@ -98,16 +98,6 @@ class MainPage(BasePage):
             EC.element_to_be_clickable(self.locators.ORDER_BUTTON)
         )
 
-    @allure.step("Добавить несколько ингредиентов в конструктор")
-    def add_multiple_ingredients_to_constructor(self, count=2):
-        """Добавить несколько ингредиентов в конструктор"""
-        for i in range(count):
-            ingredient_locator = (
-                self.locators.FIRST_BUN[0],
-                f"(//a[contains(@class, 'BurgerIngredient')])[{i + 1}]"
-            )
-            self.drag_and_drop_js(ingredient_locator, self.locators.DROP_TARGET)
-
     @allure.step("Очистить конструктор")
     def clear_constructor(self):
         """Очистить конструктор от всех ингредиентов"""
@@ -116,23 +106,17 @@ class MainPage(BasePage):
     @allure.step("Проверить наличие ингредиентов в конструкторе")
     def has_ingredients_in_constructor(self):
         """Проверить, есть ли ингредиенты в конструкторе"""
-        constructor_ingredients = (
-            self.locators.DROP_TARGET[0],
-            f"{self.locators.DROP_TARGET[1]}//*[contains(@class, 'BurgerIngredient')]"
-        )
-        return self.is_element_present(constructor_ingredients)
+        return self.is_element_present(self.locators.DROP_TARGET)
 
     @allure.step("Переключиться на вкладку 'Соусы'")
     def click_sauces_tab(self):
         """Переключиться на вкладку с соусами"""
-        sauces_tab = (self.locators.BUN_TAB[0], "//span[text()='Соусы']")
-        self.click_element(sauces_tab)
+        self.click_element(self.locators.SAUCES_TAB)
 
     @allure.step("Переключиться на вкладку 'Начинки'")
     def click_main_tab(self):
         """Переключиться на вкладку с начинками"""
-        main_tab = (self.locators.BUN_TAB[0], "//span[text()='Начинки']")
-        self.click_element(main_tab)
+        self.click_element(self.locators.MAIN_TAB)
 
     @allure.step("Переключиться на вкладку 'Булки'")
     def click_bun_tab(self):
@@ -142,14 +126,12 @@ class MainPage(BasePage):
     @allure.step("Получить активную вкладку")
     def get_active_tab(self):
         """Получить текст активной вкладки"""
-        active_tab = (self.locators.BUN_TAB[0], "//div[contains(@class, 'tab_tab_type_current')]//span")
-        return self.get_text(active_tab)
+        return self.get_text(self.locators.ACTIVE_TAB)
 
     @allure.step("Проверить отображение цены заказа")
     def get_order_total_price(self):
         """Получить общую стоимость заказа"""
-        price_locator = (self.locators.DROP_TARGET[0], f"{self.locators.DROP_TARGET[1]}//p[contains(@class, 'text_type_digits-medium')]")
-        price_text = self.get_text(price_locator)
+        price_text = self.get_text(self.locators.ORDER_PRICE)
         return int(price_text) if price_text else 0
 
     @allure.step("Сделать скриншот главной страницы")
@@ -158,103 +140,34 @@ class MainPage(BasePage):
         self.driver.save_screenshot(filename)
         return filename
 
-    @allure.step("Получить количество ингредиентов в конструкторе")
-    def get_ingredients_count_in_constructor(self):
-        """Получить количество добавленных ингредиентов"""
-        constructor_ingredients = (
-            self.locators.DROP_TARGET[0],
-            f"{self.locators.DROP_TARGET[1]}//*[contains(@class, 'BurgerIngredient')]"
-        )
-        elements = self.find_elements(constructor_ingredients)
-        return len(elements)
-
-    @allure.step("Проверить наличие булки в конструкторе")
-    def has_bun_in_constructor(self):
-        """Проверить, добавлена ли булка в конструктор"""
-        bun_in_constructor = (
-            self.locators.DROP_TARGET[0],
-            f"{self.locators.DROP_TARGET[1]}//*[contains(@class, 'Bun')]"
-        )
-        return self.is_element_present(bun_in_constructor)
-
-    @allure.step("Проверить наличие начинки в конструкторе")
-    def has_filling_in_constructor(self):
-        """Проверить, добавлена ли начинка в конструктор"""
-        filling_in_constructor = (
-            self.locators.DROP_TARGET[0],
-            f"{self.locators.DROP_TARGET[1]}//*[contains(@class, 'Main')]"
-        )
-        return self.is_element_present(filling_in_constructor)
-
-    @allure.step("Проверить наличие соуса в конструкторе")
-    def has_sauce_in_constructor(self):
-        """Проверить, добавлен ли соус в конструктор"""
-        sauce_in_constructor = (
-            self.locators.DROP_TARGET[0],
-            f"{self.locators.DROP_TARGET[1]}//*[contains(@class, 'Sauce')]"
-        )
-        return self.is_element_present(sauce_in_constructor)
-
-    @allure.step("Дождаться загрузки всех ингредиентов")
-    def wait_for_ingredients_loaded(self, timeout=10):
-        """Дождаться загрузки всех ингредиентов на странице"""
-        ingredients_loaded = (
-            self.locators.FIRST_BUN[0],
-            "//section[contains(@class, 'BurgerIngredients')]//a[contains(@class, 'BurgerIngredient')]"
-        )
-        return self.wait.until(EC.presence_of_element_located(ingredients_loaded))
-
-    @allure.step("Получить название первого ингредиента")
-    def get_first_ingredient_name(self):
-        """Получить название первого ингредиента"""
-        ingredient_name = (
-            self.locators.FIRST_BUN[0],
-            f"{self.locators.FIRST_BUN[1]}//p[contains(@class, 'text_type_main-default')]"
-        )
-        return self.get_text(ingredient_name)
-
-    @allure.step("Получить цену первого ингредиента")
-    def get_first_ingredient_price(self):
-        """Получить цену первого ингредиента"""
-        ingredient_price = (
-            self.locators.FIRST_BUN[0],
-            f"{self.locators.FIRST_BUN[1]}//p[contains(@class, 'text_type_digits-default')]"
-        )
-        price_text = self.get_text(ingredient_price)
-        return int(price_text) if price_text else 0
-
-    @allure.step("Прокрутить до секции с соусами")
-    def scroll_to_sauces_section(self):
-        """Прокрутить страницу до секции с соусами"""
-        sauces_section = (self.locators.BUN_TAB[0], "//h2[text()='Соусы']")
-        self.scroll_to_element(sauces_section)
-
-    @allure.step("Прокрутить до секции с начинками")
-    def scroll_to_main_section(self):
-        """Прокрутить страницу до секции с начинками"""
-        main_section = (self.locators.BUN_TAB[0], "//h2[text()='Начинки']")
-        self.scroll_to_element(main_section)
-
-    @allure.step("Прокрутить до секции с булками")
-    def scroll_to_buns_section(self):
-        """Прокрутить страницу до секции с булками"""
-        self.scroll_to_element(self.locators.BUN_TAB)
-
     @allure.step("Проверить отображение логотипа")
     def is_logo_visible(self):
         """Проверить, отображается ли логотип приложения"""
-        logo = (self.locators.CONSTRUCTOR_BUTTON[0], "//div[contains(@class, 'AppHeader_header__logo')]")
-        return self.is_element_visible(logo)
+        return self.is_element_visible(self.locators.LOGO)
 
     @allure.step("Проверить отображение личного кабинета")
     def is_profile_button_visible(self):
         """Проверить, отображается ли кнопка личного кабинета"""
-        profile_button = (self.locators.CONSTRUCTOR_BUTTON[0], "//a[contains(@href, '/profile')]")
-        return self.is_element_visible(profile_button)
+        return self.is_element_visible(self.locators.PROFILE_BUTTON)
 
     @allure.step("Получить текущий URL")
     def get_current_url(self):
         """Получить текущий URL страницы"""
         return self.driver.current_url
-    
-    
+
+    @allure.step("Прокрутить до секции с соусами")
+    def scroll_to_sauces_section(self):
+        """Прокрутить страницу до секции с соусами"""
+        self.scroll_to_element(self.locators.SAUCES_SECTION)
+
+    @allure.step("Прокрутить до секции с начинками")
+    def scroll_to_main_section(self):
+        """Прокрутить страницу до секции с начинками"""
+        self.scroll_to_element(self.locators.MAIN_SECTION)
+
+    @allure.step("Прокрутить до секции с булками")
+    def scroll_to_buns_section(self):
+        """Прокрутить страницу до секции с булками"""
+        self.scroll_to_element(self.locators.BUNS_SECTION)
+
+        
