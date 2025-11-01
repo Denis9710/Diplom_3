@@ -29,7 +29,7 @@ def driver(request, browser_name):
     driver = DriverFactory.get_driver(browser_name)
 
     driver.implicitly_wait(10)
-    driver.maximize_window()
+    # Убираем maximize_window - уже задано через опции
 
     yield driver
 
@@ -77,5 +77,7 @@ def user_with_order():
     # Удаляем пользователя после теста
     if access_token:
         api.delete_user(access_token)
+
+        
 
         

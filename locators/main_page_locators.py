@@ -29,7 +29,7 @@ class MainPageLocators:
     # Конкретный счётчик первого ингредиента
     FIRST_INGREDIENT_COUNTER = (
         By.XPATH,
-        "(//a[contains(@class, 'BurgerIngredient')])[1]//p[@class='counter_counter__num__3nue1']",
+        "(//a[contains(@class, 'BurgerIngredient')])[1]//p[contains(@class, 'counter')]",
     )
 
     # Область конструктора (для перетаскивания)
@@ -38,9 +38,9 @@ class MainPageLocators:
         "//section[contains(@class, 'BurgerConstructor')]",
     )
 
-    # Кнопка оформления заказа
+    # Кнопка оформления заказа (несколько возможных вариантов)
     ORDER_BUTTON = (
         By.XPATH,
-        "//button[contains(text(), 'Оформить заказ')]",
+        "//button[contains(text(), 'Оформить заказ') or contains(@class, 'button_button')]",
     )
     

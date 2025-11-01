@@ -1,9 +1,6 @@
 import allure
 import pytest
 from pages.feed_page import FeedPage
-from pages.main_page import MainPage
-from helpers.api_helpers import StellarBurgersAPI
-from data import TestData
 from urls import PAGES
 
 
@@ -90,5 +87,5 @@ class TestOrderFeed:
 
         # Ожидаем появления заказа в ленте (с таймаутом 10 секунд)
         feed_page.wait_for_order_in_feed(order_number, timeout=10)
-
         
+                
