@@ -69,3 +69,5 @@ class MainPage(BasePage):
         # Проверяем наличие таба "Булки" - он всегда есть на главной
         return self.is_element_visible(MainPageLocators.BUN_TAB)
     
+    
+    
