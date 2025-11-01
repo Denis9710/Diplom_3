@@ -1,5 +1,3 @@
-"""Локаторы для главной страницы (конструктор)"""
-
 from selenium.webdriver.common.by import By
 
 
@@ -9,7 +7,7 @@ class MainPageLocators:
     # Навигация в шапке
     CONSTRUCTOR_BUTTON = (
         By.XPATH,
-        "//a[@href='/' and contains(@class, 'AppHeader')]" "//p[text()='Конструктор']",
+        "//a[@href='/' and contains(@class, 'AppHeader')]//p[text()='Конструктор']",
     )
     FEED_BUTTON = (
         By.XPATH,
@@ -25,18 +23,43 @@ class MainPageLocators:
     # Ингредиенты
     FIRST_BUN = (
         By.XPATH,
-        "(//a[contains(@class, 'BurgerIngredient')])[1]",
+        "(//section[.//h2[text()='Булки']]//a[contains(@class, 'BurgerIngredient')])[1]",
+    )
+    FIRST_SAUCE = (
+        By.XPATH,
+        "(//section[.//h2[text()='Соусы']]//a[contains(@class, 'BurgerIngredient')])[1]",
+    )
+    FIRST_MAIN = (
+        By.XPATH,
+        "(//section[.//h2[text()='Начинки']]//a[contains(@class, 'BurgerIngredient')])[1]",
     )
 
-    # Конкретный счётчик первого ингредиента
+    # Счётчики ингредиентов
     FIRST_INGREDIENT_COUNTER = (
         By.XPATH,
-        "(//a[contains(@class, 'BurgerIngredient')])[1]"
-        "//p[@class='counter_counter__num__3nue1']",
+        "(//a[contains(@class, 'BurgerIngredient')])[1]//p[contains(@class, 'counter_counter__num')]",
     )
 
     # Область конструктора (для перетаскивания)
     DROP_TARGET = (
         By.XPATH,
         "//section[contains(@class, 'BurgerConstructor')]",
+    )
+
+    # Кнопка создания заказа
+    CREATE_ORDER_BUTTON = (
+        By.XPATH,
+        "//button[contains(text(), 'Оформить заказ')]",
+    )
+
+    # Модальное окно заказа
+    ORDER_MODAL = (
+        By.XPATH,
+        "//div[contains(@class, 'Modal_modal')]//p[contains(text(), 'идентификатор заказа')]",
+    )
+
+    # Номер заказа в модальном окне
+    ORDER_NUMBER = (
+        By.XPATH,
+        "//div[contains(@class, 'Modal_modal')]//h2[contains(@class, 'OrderModal')]",
     )

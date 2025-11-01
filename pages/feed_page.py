@@ -2,7 +2,6 @@
 
 import allure
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 from pages.base_page import BasePage
 from locators.feed_page_locators import FeedPageLocators
 
@@ -47,17 +46,20 @@ class FeedPage(BasePage):
         Ожидать появления заказа в ленте с таймаутом
         :param order_number: номер заказа для ожидания
         :param timeout: максимальное время ожидания в секундах
-        :return: True если заказ появился
         """
-        # Форматируем номер заказа до 7 символов с ведущими нулями
-        order_formatted = str(order_number).zfill(7)  # Например: 0311303
+        # Форматируем номер заказа до 6 символов с ведущими нулями
+        order_formatted = str(order_number).zfill(6)
 
-        # Создаём кастомное условие для поиска заказа
         def order_is_present(driver):
             """Проверяет наличие заказа с форматированным номером"""
             template = FeedPageLocators.ORDER_NUMBER_TEMPLATE
-            locator = template.format(order_formatted)
-            elements = driver.find_elements(By.XPATH, locator)
-            return len(elements) > 0 and elements[0].is_displayed()
+            locator = (By.XPATH, template.format(order_formatted))
+            return self.is_element_visible(locator, timeout=1)
 
-        return WebDriverWait(self.driver, timeout).until(order_is_present)
+        return self.wait_for_custom_condition(
+            order_is_present, 
+            timeout=timeout,
+            poll_frequency=0.5
+        )
+    
+    

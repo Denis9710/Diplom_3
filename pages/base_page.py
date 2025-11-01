@@ -2,6 +2,7 @@
 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 import allure
 
 
@@ -56,14 +57,24 @@ class BasePage:
     @allure.step("Проверить видимость элемента")
     def is_element_visible(self, locator, timeout=3):
         """Проверить видимость элемента"""
-        elements = self.driver.find_elements(*locator)
-        return len(elements) > 0 and elements[0].is_displayed()
+        try:
+            element = WebDriverWait(self.driver, timeout).until(
+                EC.visibility_of_element_located(locator)
+            )
+            return element.is_displayed()
+        except:
+            return False
 
     @allure.step("Проверить наличие элемента")
     def is_element_present(self, locator, timeout=3):
         """Проверить наличие элемента на странице"""
-        elements = self.driver.find_elements(*locator)
-        return len(elements) > 0
+        try:
+            WebDriverWait(self.driver, timeout).until(
+                EC.presence_of_element_located(locator)
+            )
+            return True
+        except:
+            return False
 
     @allure.step("Ждать исчезновения элемента")
     def wait_for_element_to_disappear(self, locator, timeout=10):
@@ -118,3 +129,23 @@ class BasePage:
         WebDriverWait(self.driver, timeout).until(
             lambda d: d.execute_script("return document.readyState") == "complete"
         )
+
+    @allure.step("Ожидать кастомного условия")
+    def wait_for_custom_condition(self, condition, timeout=10, poll_frequency=0.5):
+        """
+        Ожидать выполнения кастомного условия
+        :param condition: функция-условие, которая возвращает True/False
+        :param timeout: максимальное время ожидания
+        :param poll_frequency: частота проверки условия
+        :return: результат условия
+        """
+        return WebDriverWait(self.driver, timeout, poll_frequency).until(condition)
+
+    @allure.step("Ожидать текста в элементе")
+    def wait_for_text_in_element(self, locator, text, timeout=10):
+        """Ожидать появления определенного текста в элементе"""
+        return WebDriverWait(self.driver, timeout).until(
+            EC.text_to_be_present_in_element(locator, text)
+        )
+    
+    

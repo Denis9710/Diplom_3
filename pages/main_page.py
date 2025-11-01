@@ -75,19 +75,72 @@ class MainPage(BasePage):
         Ожидать, что счётчик ингредиента примет нужное значение
         :param expected_value: ожидаемое значение счётчика (строка)
         :param timeout: максимальное время ожидания в секундах
-        :return: True если счётчик достиг нужного значения
         """
-        from selenium.webdriver.support.ui import WebDriverWait
-        from selenium.webdriver.support import expected_conditions as EC
-
-        return WebDriverWait(self.driver, timeout).until(
-            EC.text_to_be_present_in_element(
-                MainPageLocators.FIRST_INGREDIENT_COUNTER, expected_value
-            )
+        self.wait_for_text_in_element(
+            MainPageLocators.FIRST_INGREDIENT_COUNTER, expected_value, timeout
         )
 
     @allure.step("Проверить, что находимся на главной странице")
     def is_on_main_page(self):
         """Проверить, что находимся на главной странице"""
-        # Проверяем наличие таба "Булки" - он всегда есть на главной
         return self.is_element_visible(MainPageLocators.BUN_TAB)
+
+    @allure.step("Создать заказ через UI")
+    def create_order_ui(self, drag_and_drop_script):
+        """
+        Создать заказ через пользовательский интерфейс
+        1. Добавить булку в конструктор
+        2. Добавить соус в конструктор
+        3. Добавить начинку в конструктор
+        4. Нажать кнопку "Оформить заказ"
+        :param drag_and_drop_script: JavaScript для drag and drop
+        :return: номер созданного заказа
+        """
+        # Добавляем булку
+        self.drag_and_drop_js(
+            MainPageLocators.FIRST_BUN,
+            MainPageLocators.DROP_TARGET,
+            drag_and_drop_script,
+        )
+
+        # Добавляем соус
+        self.drag_and_drop_js(
+            MainPageLocators.FIRST_SAUCE,
+            MainPageLocators.DROP_TARGET,
+            drag_and_drop_script,
+        )
+
+        # Добавляем начинку
+        self.drag_and_drop_js(
+            MainPageLocators.FIRST_MAIN,
+            MainPageLocators.DROP_TARGET,
+            drag_and_drop_script,
+        )
+
+        # Нажимаем кнопку "Оформить заказ"
+        self.click_element(MainPageLocators.CREATE_ORDER_BUTTON)
+
+        # Ожидаем появления модального окна с номером заказа
+        self.wait_for_order_modal()
+
+        # Получаем номер заказа
+        order_number = self.get_order_number_from_modal()
+        return order_number
+
+    @allure.step("Ожидать появления модального окна заказа")
+    def wait_for_order_modal(self, timeout=10):
+        """Ожидать появления модального окна с деталями заказа"""
+        return self.wait_for_custom_condition(
+            lambda d: self.is_element_visible(MainPageLocators.ORDER_MODAL),
+            timeout=timeout
+        )
+
+    @allure.step("Получить номер заказа из модального окна")
+    def get_order_number_from_modal(self):
+        """Получить номер созданного заказа из модального окна"""
+        order_text = self.get_text(MainPageLocators.ORDER_NUMBER)
+        # Извлекаем только цифры из текста
+        import re
+        numbers = re.findall(r'\d+', order_text)
+        return int(numbers[0]) if numbers else None
+    
