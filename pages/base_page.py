@@ -92,8 +92,56 @@ class BasePage:
         return WebDriverWait(self.driver, timeout).until(EC.url_contains(text))
 
     @allure.step("Выполнить drag and drop через JavaScript")
-    def drag_and_drop_js(self, source_locator, target_locator, js_script):
+    def drag_and_drop_js(self, source_locator, target_locator):
+        """Выполнить drag and drop с использованием JavaScript"""
+        js_script = """
+        function simulateDragDrop(sourceNode, destinationNode) {
+            var EVENT_TYPES = {
+                DRAG_END: 'dragend',
+                DRAG_START: 'dragstart',
+                DROP: 'drop'
+            }
 
+            function createCustomEvent(type) {
+                var event = new CustomEvent("CustomEvent")
+                event.initCustomEvent(type, true, true, null)
+                event.dataTransfer = {
+                    data: {
+                    },
+                    setData: function(type, val) {
+                        this.data[type] = val
+                    },
+                    getData: function(type) {
+                        return this.data[type]
+                    }
+                }
+                return event
+            }
+
+            function dispatchEvent(node, type, event) {
+                if (node.dispatchEvent) {
+                    return node.dispatchEvent(event)
+                }
+                if (node.fireEvent) {
+                    return node.fireEvent("on" + type, event)
+                }
+            }
+
+            var event = createCustomEvent(EVENT_TYPES.DRAG_START)
+            dispatchEvent(sourceNode, EVENT_TYPES.DRAG_START, event)
+
+            var dropEvent = createCustomEvent(EVENT_TYPES.DROP)
+            dropEvent.dataTransfer = event.dataTransfer
+            dispatchEvent(destinationNode, EVENT_TYPES.DROP, dropEvent)
+
+            var dragEndEvent = createCustomEvent(EVENT_TYPES.DRAG_END)
+            dragEndEvent.dataTransfer = event.dataTransfer
+            dispatchEvent(sourceNode, EVENT_TYPES.DRAG_END, dragEndEvent)
+        }
+
+        simulateDragDrop(arguments[0], arguments[1]);
+        """
+        
         source = self.find_element(source_locator)
         target = self.find_element(target_locator)
         self.driver.execute_script(js_script, source, target)
@@ -110,3 +158,10 @@ class BasePage:
         WebDriverWait(self.driver, timeout).until(
             lambda d: d.execute_script("return document.readyState") == "complete"
         )
+
+    @allure.step("Ожидать появления элемента с кастомным условием")
+    def wait_for_custom_condition(self, condition, timeout=10):
+        """Ожидать выполнения кастомного условия"""
+        return WebDriverWait(self.driver, timeout).until(condition)
+    
+    

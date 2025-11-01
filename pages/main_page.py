@@ -28,17 +28,16 @@ class MainPage(BasePage):
         self.click_element(MainPageLocators.FIRST_BUN)
 
     @allure.step("Перетащить ингредиент в конструктор")
-    def drag_ingredient_to_constructor(self, drag_and_drop_script):
-
+    def drag_ingredient_to_constructor(self):
+        """Перетащить ингредиент в конструктор"""
         self.drag_and_drop_js(
             MainPageLocators.FIRST_BUN,
             MainPageLocators.DROP_TARGET,
-            drag_and_drop_script,
         )
 
     @allure.step("Получить значение счётчика первого ингредиента")
     def get_first_ingredient_counter(self):
-
+        """Получить числовое значение счётчика первого ингредиента"""
         if self.is_element_visible(
             MainPageLocators.FIRST_INGREDIENT_COUNTER, timeout=2
         ):
@@ -55,15 +54,14 @@ class MainPage(BasePage):
 
     @allure.step("Получить текст счётчика первого ингредиента")
     def get_first_ingredient_counter_text(self):
-
+        """Получить текстовое значение счётчика первого ингредиента"""
         return self.get_text(MainPageLocators.FIRST_INGREDIENT_COUNTER)
 
     @allure.step("Ожидать появления счётчика с нужным значением")
     def wait_for_counter_value(self, expected_value, timeout=10):
-
-        from selenium.webdriver.support.ui import WebDriverWait
+        """Ожидать появления счётчика с указанным значением"""
         from selenium.webdriver.support import expected_conditions as EC
-
+        
         return WebDriverWait(self.driver, timeout).until(
             EC.text_to_be_present_in_element(
                 MainPageLocators.FIRST_INGREDIENT_COUNTER, expected_value
@@ -75,3 +73,5 @@ class MainPage(BasePage):
         """Проверить, что находимся на главной странице"""
         # Проверяем наличие таба "Булки" - он всегда есть на главной
         return self.is_element_visible(MainPageLocators.BUN_TAB)
+    
+    

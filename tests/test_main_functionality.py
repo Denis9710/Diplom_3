@@ -120,7 +120,7 @@ class TestMainFunctionality:
     @allure.description(
         "Проверка увеличения счётчика ингредиента " "при добавлении его в заказ"
     )
-    def test_ingredient_counter_increases(self, driver, drag_and_drop_js):
+    def test_ingredient_counter_increases(self, driver):
 
         main_page = MainPage(driver)
 
@@ -134,7 +134,7 @@ class TestMainFunctionality:
         ), f"Начальный счётчик должен быть 0, получено: {initial_counter}"
 
         # Перетаскиваем ингредиент в конструктор
-        main_page.drag_ingredient_to_constructor(drag_and_drop_js)
+        main_page.drag_ingredient_to_constructor()
 
         # Ожидаем, что счётчик примет значение "2" (для булки)
         # Метод бросит исключение если таймаут, тест упадёт автоматически
@@ -152,3 +152,5 @@ class TestMainFunctionality:
         assert counter_text == "2", (
             f"Счётчик должен показывать '2' для булки, " f"получено: '{counter_text}'"
         )
+
+        
