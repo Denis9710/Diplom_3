@@ -1,5 +1,3 @@
-"""Локаторы для главной страницы (конструктор)"""
-
 from selenium.webdriver.common.by import By
 
 
@@ -9,7 +7,7 @@ class MainPageLocators:
     # Навигация в шапке
     CONSTRUCTOR_BUTTON = (
         By.XPATH,
-        "//a[@href='/' and contains(@class, 'AppHeader')]" "//p[text()='Конструктор']",
+        "//a[@href='/' and contains(@class, 'AppHeader')]//p[text()='Конструктор']",
     )
     FEED_BUTTON = (
         By.XPATH,
@@ -31,8 +29,7 @@ class MainPageLocators:
     # Конкретный счётчик первого ингредиента
     FIRST_INGREDIENT_COUNTER = (
         By.XPATH,
-        "(//a[contains(@class, 'BurgerIngredient')])[1]"
-        "//p[@class='counter_counter__num__3nue1']",
+        "(//a[contains(@class, 'BurgerIngredient')])[1]//p[@class='counter_counter__num__3nue1']",
     )
 
     # Область конструктора (для перетаскивания)
@@ -40,3 +37,10 @@ class MainPageLocators:
         By.XPATH,
         "//section[contains(@class, 'BurgerConstructor')]",
     )
+
+    # Кнопка оформления заказа
+    ORDER_BUTTON = (
+        By.XPATH,
+        "//button[contains(text(), 'Оформить заказ')]",
+    )
+    

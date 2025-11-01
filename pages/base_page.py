@@ -54,14 +54,18 @@ class BasePage:
     @allure.step("Проверить видимость элемента")
     def is_element_visible(self, locator, timeout=3):
         """Проверить видимость элемента"""
-        elements = self.driver.find_elements(*locator)
-        return len(elements) > 0 and elements[0].is_displayed()
+        return self.is_element_present(locator, timeout) and self.find_element(locator, timeout).is_displayed()
 
     @allure.step("Проверить наличие элемента")
     def is_element_present(self, locator, timeout=3):
         """Проверить наличие элемента на странице"""
-        elements = self.driver.find_elements(*locator)
-        return len(elements) > 0
+        try:
+            WebDriverWait(self.driver, timeout).until(
+                EC.presence_of_element_located(locator)
+            )
+            return True
+        except:
+            return False
 
     @allure.step("Ждать исчезновения элемента")
     def wait_for_element_to_disappear(self, locator, timeout=10):

@@ -12,35 +12,11 @@ from urls import PAGES
 class TestOrderFeed:
     """Тесты функциональности ленты заказов"""
 
-    @pytest.fixture(scope="function")
-    def user_with_order(self):
-        """Фикстура для создания пользователя с заказом через UI"""
-        api = StellarBurgersAPI()
-
-        # Генерируем данные пользователя
-        user_data = TestData.generate_user_data()
-
-        # Создаём пользователя
-        response = api.create_user(user_data)
-        assert (
-            response.status_code == 200
-        ), f"Не удалось создать пользователя: {response.text}"
-
-        # Получаем токен
-        access_token = response.json().get("accessToken")
-
-        yield {"user_data": user_data, "api": api, "token": access_token}
-
-        # Удаляем пользователя после теста
-        if access_token:
-            api.delete_user(access_token)
-
     @allure.title("Счётчик 'Выполнено за всё время' увеличивается")
     @allure.description("Проверка увеличения счётчика общего количества заказов")
     def test_total_counter_increases(self, driver, user_with_order):
         """Тест увеличения общего счётчика заказов при создании нового заказа"""
         feed_page = FeedPage(driver)
-        main_page = MainPage(driver)
 
         # Открываем страницу ленты заказов
         feed_page.open_feed_page(PAGES["feed"])
@@ -48,13 +24,6 @@ class TestOrderFeed:
         # Получаем начальное значение счётчика
         initial_total = feed_page.get_total_orders_counter()
 
-        # Здесь должен быть код создания заказа через UI
-        # Для этого нужно:
-        # 1. Авторизоваться на главной странице
-        # 2. Добавить ингредиенты в конструктор
-        # 3. Нажать кнопку "Оформить заказ"
-        # 4. Подтвердить создание заказа
-        
         # Временная заглушка - используем API для демонстрации
         # В реальном тесте это должно быть сделано через UI
         api = user_with_order["api"]

@@ -2,8 +2,6 @@ import allure
 import pytest
 from pages.main_page import MainPage
 from pages.order_modal import OrderModal
-from helpers.api_helpers import StellarBurgersAPI
-from data import TestData
 from urls import PAGES
 
 
@@ -12,31 +10,9 @@ from urls import PAGES
 class TestOrderCreation:
     """Тесты создания заказа через пользовательский интерфейс"""
 
-    @pytest.fixture(scope="function")
-    def registered_user(self):
-        """Фикстура для создания зарегистрированного пользователя"""
-        api = StellarBurgersAPI()
-        user_data = TestData.generate_user_data()
-        
-        # Создаём пользователя
-        response = api.create_user(user_data)
-        assert response.status_code == 200, f"Не удалось создать пользователя: {response.text}"
-        
-        access_token = response.json().get("accessToken")
-        
-        yield {
-            "user_data": user_data, 
-            "api": api, 
-            "token": access_token
-        }
-        
-        # Удаляем пользователя после теста
-        if access_token:
-            api.delete_user(access_token)
-
     @allure.title("Создание заказа авторизованным пользователем")
     @allure.description("Проверка создания заказа через UI авторизованным пользователем")
-    def test_create_order_authorized_user(self, driver, registered_user):
+    def test_create_order_authorized_user(self, driver, user_with_order):
         """Тест создания заказа авторизованным пользователем через UI"""
         main_page = MainPage(driver)
         order_modal = OrderModal(driver)

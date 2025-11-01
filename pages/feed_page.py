@@ -1,6 +1,5 @@
 import allure
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
 from pages.base_page import BasePage
 from locators.feed_page_locators import FeedPageLocators
 
@@ -44,6 +43,8 @@ class FeedPage(BasePage):
             """Проверяет наличие заказа с форматированным номером"""
             template = FeedPageLocators.ORDER_NUMBER_TEMPLATE
             locator = (By.XPATH, template.format(order_formatted))
-            return len(driver.find_elements(*locator)) > 0
+            return self.is_element_present(locator)
 
         return self.wait_for_custom_condition(order_is_present, timeout)
+    
+    

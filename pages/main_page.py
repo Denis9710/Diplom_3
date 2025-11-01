@@ -1,4 +1,5 @@
 import allure
+from selenium.webdriver.support import expected_conditions as EC
 from pages.base_page import BasePage
 from locators.main_page_locators import MainPageLocators
 
@@ -38,9 +39,7 @@ class MainPage(BasePage):
     @allure.step("Получить значение счётчика первого ингредиента")
     def get_first_ingredient_counter(self):
         """Получить числовое значение счётчика первого ингредиента"""
-        if self.is_element_visible(
-            MainPageLocators.FIRST_INGREDIENT_COUNTER, timeout=2
-        ):
+        if self.is_element_visible(MainPageLocators.FIRST_INGREDIENT_COUNTER, timeout=2):
             counter_text = self.get_text(MainPageLocators.FIRST_INGREDIENT_COUNTER)
             return int(counter_text) if counter_text else 0
         return 0
@@ -48,9 +47,7 @@ class MainPage(BasePage):
     @allure.step("Проверить видимость счётчика ингредиента")
     def is_ingredient_counter_visible(self):
         """Проверить, виден ли счётчик ингредиента"""
-        return self.is_element_visible(
-            MainPageLocators.FIRST_INGREDIENT_COUNTER, timeout=5
-        )
+        return self.is_element_visible(MainPageLocators.FIRST_INGREDIENT_COUNTER, timeout=5)
 
     @allure.step("Получить текст счётчика первого ингредиента")
     def get_first_ingredient_counter_text(self):
@@ -60,9 +57,7 @@ class MainPage(BasePage):
     @allure.step("Ожидать появления счётчика с нужным значением")
     def wait_for_counter_value(self, expected_value, timeout=10):
         """Ожидать появления счётчика с указанным значением"""
-        from selenium.webdriver.support import expected_conditions as EC
-        
-        return WebDriverWait(self.driver, timeout).until(
+        return self.wait.until(
             EC.text_to_be_present_in_element(
                 MainPageLocators.FIRST_INGREDIENT_COUNTER, expected_value
             )
@@ -73,5 +68,4 @@ class MainPage(BasePage):
         """Проверить, что находимся на главной странице"""
         # Проверяем наличие таба "Булки" - он всегда есть на главной
         return self.is_element_visible(MainPageLocators.BUN_TAB)
-    
     
