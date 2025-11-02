@@ -104,5 +104,5 @@ class MainPage(BasePage):
     def is_on_main_page(self):
         """Проверить, что находимся на главной странице"""
         return self.is_element_visible(MainPageLocators.BUN_TAB)
-
-
+    
+    

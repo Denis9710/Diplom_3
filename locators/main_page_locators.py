@@ -60,5 +60,4 @@ class MainPageLocators:
         By.XPATH,
         "//div[contains(@class, 'Modal_modal')]//button[contains(@class, 'Modal_modal__close')]",
     )
-
     
