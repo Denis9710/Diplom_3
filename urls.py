@@ -1,5 +1,3 @@
-"""URL константы для приложения Stellar Burgers"""
-
 BASE_URL = "https://stellarburgers.education-services.ru/"
 API_BASE_URL = "https://stellarburgers.education-services.ru/api"
 
@@ -7,6 +5,7 @@ API_BASE_URL = "https://stellarburgers.education-services.ru/api"
 URL_PARTS = {
     "domain": "stellarburgers",
     "feed": "feed",
+    "login": "login",
 }
 
 # API эндпоинты
@@ -29,3 +28,5 @@ PAGES = {
     "profile": f"{BASE_URL}profile",
     "profile_orders": f"{BASE_URL}profile/orders",
 }
+
+

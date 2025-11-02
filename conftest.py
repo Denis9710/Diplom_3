@@ -79,6 +79,7 @@ def logged_in_user(driver, user_with_order):
     Фикстура для авторизованного пользователя
     :return: данные пользователя
     """
+    # Импортируем здесь, чтобы избежать циклических импортов
     from pages.login_page import LoginPage
     
     login_page = LoginPage(driver)
@@ -97,5 +98,5 @@ def pytest_runtest_makereport(item, call):
     outcome = yield
     rep = outcome.get_result()
     setattr(item, f"rep_{rep.when}", rep)
-
     
+       
