@@ -1,8 +1,5 @@
-"""Базовый класс для всех страниц"""
-
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
 import allure
 
 
@@ -13,6 +10,68 @@ class BasePage:
         self.driver = driver
         self.wait = WebDriverWait(driver, 10)
 
+    @allure.step("Выполнить drag and drop через JavaScript")
+    def drag_and_drop_js(self, source_locator, target_locator):
+        """
+        Выполнить drag and drop с использованием JavaScript
+        Необходимо для корректной работы в Firefox
+        :param source_locator: локатор элемента источника
+        :param target_locator: локатор элемента назначения
+        """
+        source = self.find_element(source_locator)
+        target = self.find_element(target_locator)
+        
+        js_script = """
+        function simulateDragDrop(sourceNode, destinationNode) {
+            var EVENT_TYPES = {
+                DRAG_END: 'dragend',
+                DRAG_START: 'dragstart',
+                DROP: 'drop'
+            }
+
+            function createCustomEvent(type) {
+                var event = new CustomEvent("CustomEvent")
+                event.initCustomEvent(type, true, true, null)
+                event.dataTransfer = {
+                    data: {
+                    },
+                    setData: function(type, val) {
+                        this.data[type] = val
+                    },
+                    getData: function(type) {
+                        return this.data[type]
+                    }
+                }
+                return event
+            }
+
+            function dispatchEvent(node, type, event) {
+                if (node.dispatchEvent) {
+                    return node.dispatchEvent(event)
+                }
+                if (node.fireEvent) {
+                    return node.fireEvent("on" + type, event)
+                }
+            }
+
+            var event = createCustomEvent(EVENT_TYPES.DRAG_START)
+            dispatchEvent(sourceNode, EVENT_TYPES.DRAG_START, event)
+
+            var dropEvent = createCustomEvent(EVENT_TYPES.DROP)
+            dropEvent.dataTransfer = event.dataTransfer
+            dispatchEvent(destinationNode, EVENT_TYPES.DROP, dropEvent)
+
+            var dragEndEvent = createCustomEvent(EVENT_TYPES.DRAG_END)
+            dragEndEvent.dataTransfer = event.dataTransfer
+            dispatchEvent(sourceNode, EVENT_TYPES.DRAG_END, dragEndEvent)
+        }
+
+        simulateDragDrop(arguments[0], arguments[1]);
+        """
+        
+        self.driver.execute_script(js_script, source, target)
+
+    # Остальные методы BasePage остаются без изменений...
     @allure.step("Открыть URL: {url}")
     def open(self, url):
         """Открыть страницу по URL"""
@@ -57,24 +116,14 @@ class BasePage:
     @allure.step("Проверить видимость элемента")
     def is_element_visible(self, locator, timeout=3):
         """Проверить видимость элемента"""
-        try:
-            element = WebDriverWait(self.driver, timeout).until(
-                EC.visibility_of_element_located(locator)
-            )
-            return element.is_displayed()
-        except:
-            return False
+        elements = self.driver.find_elements(*locator)
+        return len(elements) > 0 and elements[0].is_displayed()
 
     @allure.step("Проверить наличие элемента")
     def is_element_present(self, locator, timeout=3):
         """Проверить наличие элемента на странице"""
-        try:
-            WebDriverWait(self.driver, timeout).until(
-                EC.presence_of_element_located(locator)
-            )
-            return True
-        except:
-            return False
+        elements = self.driver.find_elements(*locator)
+        return len(elements) > 0
 
     @allure.step("Ждать исчезновения элемента")
     def wait_for_element_to_disappear(self, locator, timeout=10):
@@ -104,19 +153,6 @@ class BasePage:
         """Ждать, что URL содержит определенный текст"""
         return WebDriverWait(self.driver, timeout).until(EC.url_contains(text))
 
-    @allure.step("Выполнить drag and drop через JavaScript")
-    def drag_and_drop_js(self, source_locator, target_locator, js_script):
-        """
-        Выполнить drag and drop с использованием JavaScript
-        Необходимо для корректной работы в Firefox
-        :param source_locator: локатор элемента источника
-        :param target_locator: локатор элемента назначения
-        :param js_script: JavaScript код для drag and drop
-        """
-        source = self.find_element(source_locator)
-        target = self.find_element(target_locator)
-        self.driver.execute_script(js_script, source, target)
-
     @allure.step("Получить значение атрибута элемента")
     def get_attribute(self, locator, attribute_name, timeout=10):
         """Получить значение атрибута элемента"""
@@ -130,22 +166,16 @@ class BasePage:
             lambda d: d.execute_script("return document.readyState") == "complete"
         )
 
-    @allure.step("Ожидать кастомного условия")
-    def wait_for_custom_condition(self, condition, timeout=10, poll_frequency=0.5):
-        """
-        Ожидать выполнения кастомного условия
-        :param condition: функция-условие, которая возвращает True/False
-        :param timeout: максимальное время ожидания
-        :param poll_frequency: частота проверки условия
-        :return: результат условия
-        """
-        return WebDriverWait(self.driver, timeout, poll_frequency).until(condition)
-
-    @allure.step("Ожидать текста в элементе")
+    @allure.step("Ожидать появления текста в элементе")
     def wait_for_text_in_element(self, locator, text, timeout=10):
         """Ожидать появления определенного текста в элементе"""
         return WebDriverWait(self.driver, timeout).until(
             EC.text_to_be_present_in_element(locator, text)
         )
+
+    @allure.step("Ожидать появления элемента с кастомным условием")
+    def wait_for_custom_condition(self, condition, timeout=10):
+        """Ожидать выполнения кастомного условия"""
+        return WebDriverWait(self.driver, timeout).until(condition)
     
     

@@ -23,21 +23,14 @@ class MainPageLocators:
     # Ингредиенты
     FIRST_BUN = (
         By.XPATH,
-        "(//section[.//h2[text()='Булки']]//a[contains(@class, 'BurgerIngredient')])[1]",
-    )
-    FIRST_SAUCE = (
-        By.XPATH,
-        "(//section[.//h2[text()='Соусы']]//a[contains(@class, 'BurgerIngredient')])[1]",
-    )
-    FIRST_MAIN = (
-        By.XPATH,
-        "(//section[.//h2[text()='Начинки']]//a[contains(@class, 'BurgerIngredient')])[1]",
+        "(//a[contains(@class, 'BurgerIngredient')])[1]",
     )
 
-    # Счётчики ингредиентов
+    # Конкретный счётчик первого ингредиента
     FIRST_INGREDIENT_COUNTER = (
         By.XPATH,
-        "(//a[contains(@class, 'BurgerIngredient')])[1]//p[contains(@class, 'counter_counter__num')]",
+        "(//a[contains(@class, 'BurgerIngredient')])[1]"
+        "//p[@class='counter_counter__num__3nue1']",
     )
 
     # Область конструктора (для перетаскивания)
@@ -55,11 +48,17 @@ class MainPageLocators:
     # Модальное окно заказа
     ORDER_MODAL = (
         By.XPATH,
-        "//div[contains(@class, 'Modal_modal')]//p[contains(text(), 'идентификатор заказа')]",
+        "//div[contains(@class, 'Modal_modal')]//h2[contains(text(), 'идентификатор заказа')]",
     )
 
-    # Номер заказа в модальном окне
     ORDER_NUMBER = (
         By.XPATH,
-        "//div[contains(@class, 'Modal_modal')]//h2[contains(@class, 'OrderModal')]",
+        "//div[contains(@class, 'Modal_modal')]//h2[contains(@class, 'Modal_modal__title')]",
     )
+
+    CLOSE_ORDER_BUTTON = (
+        By.XPATH,
+        "//div[contains(@class, 'Modal_modal')]//button[contains(@class, 'Modal_modal__close')]",
+    )
+
+    
