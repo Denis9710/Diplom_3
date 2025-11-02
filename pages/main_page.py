@@ -1,4 +1,5 @@
 import allure
+import re
 from pages.base_page import BasePage
 from locators.main_page_locators import MainPageLocators
 
@@ -35,7 +36,6 @@ class MainPage(BasePage):
         """Получить номер созданного заказа"""
         order_text = self.get_text(MainPageLocators.ORDER_NUMBER)
         # Извлекаем только цифры из текста
-        import re
         numbers = re.findall(r'\d+', order_text)
         return numbers[0] if numbers else None
 
@@ -44,7 +44,6 @@ class MainPage(BasePage):
         """Закрыть модальное окно с информацией о заказе"""
         self.click_element(MainPageLocators.CLOSE_ORDER_BUTTON)
 
-    # Остальные методы остаются без изменений...
     @allure.step("Кликнуть на кнопку 'Конструктор'")
     def click_constructor_button(self):
         """Кликнуть на кнопку Конструктор в навигации"""
@@ -105,4 +104,4 @@ class MainPage(BasePage):
         """Проверить, что находимся на главной странице"""
         return self.is_element_visible(MainPageLocators.BUN_TAB)
     
-    
+

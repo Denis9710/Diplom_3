@@ -71,7 +71,6 @@ class BasePage:
         
         self.driver.execute_script(js_script, source, target)
 
-    # Остальные методы BasePage остаются без изменений...
     @allure.step("Открыть URL: {url}")
     def open(self, url):
         """Открыть страницу по URL"""
@@ -132,6 +131,13 @@ class BasePage:
             EC.invisibility_of_element_located(locator)
         )
 
+    @allure.step("Ожидать видимости элемента")
+    def wait_for_element_visible(self, locator, timeout=10):
+        """Ожидать видимости элемента"""
+        return WebDriverWait(self.driver, timeout).until(
+            EC.visibility_of_element_located(locator)
+        )
+
     @allure.step("Скроллить до элемента")
     def scroll_to_element(self, locator):
         """Скроллить до элемента"""
@@ -177,5 +183,4 @@ class BasePage:
     def wait_for_custom_condition(self, condition, timeout=10):
         """Ожидать выполнения кастомного условия"""
         return WebDriverWait(self.driver, timeout).until(condition)
-    
     
