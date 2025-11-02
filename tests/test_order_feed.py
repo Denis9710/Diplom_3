@@ -32,8 +32,11 @@ class TestOrderFeed:
         # Создаём заказ через UI
         main_page.open_main_page(PAGES["main"])
         
-        # Добавляем полный набор ингредиентов
-        main_page.add_full_ingredients_set()
+        # Добавляем минимальный набор ингредиентов
+        main_page.add_minimal_ingredients_set()
+        
+        # Проверяем, что кнопка активна
+        assert main_page.is_order_button_active(), "Кнопка заказа не активна после добавления ингредиентов"
         
         main_page.create_order()
         main_page.wait_for_order_created()
@@ -71,8 +74,11 @@ class TestOrderFeed:
         # Создаём заказ через UI
         main_page.open_main_page(PAGES["main"])
         
-        # Добавляем полный набор ингредиентов
-        main_page.add_full_ingredients_set()
+        # Добавляем минимальный набор ингредиентов
+        main_page.add_minimal_ingredients_set()
+        
+        # Проверяем, что кнопка активна
+        assert main_page.is_order_button_active(), "Кнопка заказа не активна после добавления ингредиентов"
         
         main_page.create_order()
         main_page.wait_for_order_created()
@@ -107,8 +113,11 @@ class TestOrderFeed:
         # Создаём заказ через UI
         main_page.open_main_page(PAGES["main"])
         
-        # Добавляем полный набор ингредиентов
-        main_page.add_full_ingredients_set()
+        # Добавляем минимальный набор ингредиентов
+        main_page.add_minimal_ingredients_set()
+        
+        # Проверяем, что кнопка активна
+        assert main_page.is_order_button_active(), "Кнопка заказа не активна после добавления ингредиентов"
         
         main_page.create_order()
         order_number = main_page.get_order_number()

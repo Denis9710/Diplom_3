@@ -141,7 +141,7 @@ class TestMainFunctionality:
 
     @allure.title("Увеличение счётчика при добавлении ингредиента")
     @allure.description(
-        "Проверка увеличения счётчика ингредиента при добавлении его в заказ"
+        "Проверка увеличения счётчика ингредиента " "при добавлении его в заказ"
     )
     def test_ingredient_counter_increases(self, driver):
         """
@@ -162,8 +162,8 @@ class TestMainFunctionality:
             initial_counter == 0
         ), f"Начальный счётчик должен быть 0, получено: {initial_counter}"
 
-        # Перетаскиваем булку в конструктор (используем конкретный метод для булки)
-        main_page.drag_bun_to_constructor()
+        # Перетаскиваем ингредиент в конструктор
+        main_page.drag_ingredient_to_constructor()
 
         # Ожидаем, что счётчик примет значение "2" (для булки)
         # Метод бросит исключение если таймаут, тест упадёт автоматически
@@ -182,3 +182,4 @@ class TestMainFunctionality:
             f"Счётчик должен показывать '2' для булки, " f"получено: '{counter_text}'"
         )
 
+        

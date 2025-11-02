@@ -184,3 +184,4 @@ class BasePage:
         """Ожидать выполнения кастомного условия"""
         return WebDriverWait(self.driver, timeout).until(condition)
     
+    
