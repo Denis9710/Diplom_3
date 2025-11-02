@@ -1,5 +1,3 @@
-"""Тесты ленты заказов Stellar Burgers"""
-
 import allure
 import pytest
 from pages.feed_page import FeedPage

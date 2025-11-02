@@ -141,7 +141,7 @@ class TestMainFunctionality:
 
     @allure.title("Увеличение счётчика при добавлении ингредиента")
     @allure.description(
-        "Проверка увеличения счётчика ингредиента " "при добавлении его в заказ"
+        "Проверка увеличения счётчика ингредиента при добавлении его в заказ"
     )
     def test_ingredient_counter_increases(self, driver):
         """

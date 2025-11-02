@@ -1,5 +1,6 @@
 import allure
 import re
+import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from pages.base_page import BasePage
@@ -15,13 +16,57 @@ class MainPage(BasePage):
         self.open(url)
         self.wait_for_page_load()
 
-    @allure.step("Перетащить ингредиент в конструктор")
-    def drag_ingredient_to_constructor(self):
-        """Перетащить первый ингредиент в конструктор"""
+    @allure.step("Перетащить булку в конструктор")
+    def drag_bun_to_constructor(self):
+        """Перетащить первую булку в конструктор"""
         self.drag_and_drop_js(
             MainPageLocators.FIRST_BUN,
             MainPageLocators.DROP_TARGET
         )
+
+    @allure.step("Перетащить соус в конструктор")
+    def drag_sauce_to_constructor(self):
+        """Перетащить первый соус в конструктор"""
+        # Сначала переходим на вкладку соусов
+        self.click_element(MainPageLocators.SAUCES_TAB)
+        # Ждем загрузки секции соусов
+        self.wait_for_element_visible(MainPageLocators.SAUCES_SECTION)
+        # Перетаскиваем соус
+        self.drag_and_drop_js(
+            MainPageLocators.FIRST_SAUCE,
+            MainPageLocators.DROP_TARGET
+        )
+
+    @allure.step("Перетащить начинку в конструктор")
+    def drag_filling_to_constructor(self):
+        """Перетащить первую начинку в конструктор"""
+        # Сначала переходим на вкладку начинок
+        self.click_element(MainPageLocators.FILLINGS_TAB)
+        # Ждем загрузки секции начинок
+        self.wait_for_element_visible(MainPageLocators.FILLINGS_SECTION)
+        # Перетаскиваем начинку
+        self.drag_and_drop_js(
+            MainPageLocators.FIRST_FILLING,
+            MainPageLocators.DROP_TARGET
+        )
+
+    @allure.step("Добавить полный набор ингредиентов для заказа")
+    def add_full_ingredients_set(self):
+        """Добавить булку, соус и начинку для создания полноценного заказа"""
+        # Добавляем булку
+        self.drag_bun_to_constructor()
+        time.sleep(1)  # Небольшая пауза между действиями
+        
+        # Добавляем соус
+        self.drag_sauce_to_constructor()
+        time.sleep(1)
+        
+        # Добавляем начинку
+        self.drag_filling_to_constructor()
+        time.sleep(1)
+        
+        # Ждем, пока кнопка станет активной
+        self.wait_for_order_button_active()
 
     @allure.step("Создать заказ")
     def create_order(self):

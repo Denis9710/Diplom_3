@@ -19,11 +19,43 @@ class MainPageLocators:
         By.XPATH,
         "//span[text()='Булки']",
     )
+    SAUCES_TAB = (
+        By.XPATH,
+        "//span[text()='Соусы']",
+    )
+    FILLINGS_TAB = (
+        By.XPATH,
+        "//span[text()='Начинки']",
+    )
 
-    # Ингредиенты
+    # Ингредиенты - булки
     FIRST_BUN = (
         By.XPATH,
         "(//a[contains(@class, 'BurgerIngredient')])[1]",
+    )
+    BUN_SECTION = (
+        By.XPATH,
+        "//h2[text()='Булки']/following-sibling::ul",
+    )
+
+    # Ингредиенты - соусы
+    SAUCES_SECTION = (
+        By.XPATH,
+        "//h2[text()='Соусы']/following-sibling::ul",
+    )
+    FIRST_SAUCE = (
+        By.XPATH,
+        "//h2[text()='Соусы']/following-sibling::ul//a[contains(@class, 'BurgerIngredient')][1]",
+    )
+
+    # Ингредиенты - начинки
+    FILLINGS_SECTION = (
+        By.XPATH,
+        "//h2[text()='Начинки']/following-sibling::ul",
+    )
+    FIRST_FILLING = (
+        By.XPATH,
+        "//h2[text()='Начинки']/following-sibling::ul//a[contains(@class, 'BurgerIngredient')][1]",
     )
 
     # Конкретный счётчик первого ингредиента
@@ -60,4 +92,5 @@ class MainPageLocators:
         By.XPATH,
         "//div[contains(@class, 'Modal_modal')]//button[contains(@class, 'Modal_modal__close')]",
     )
+
     
