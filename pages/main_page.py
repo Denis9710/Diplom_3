@@ -1,5 +1,7 @@
 import allure
 import re
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from pages.base_page import BasePage
 from locators.main_page_locators import MainPageLocators
 
@@ -24,7 +26,16 @@ class MainPage(BasePage):
     @allure.step("Создать заказ")
     def create_order(self):
         """Создать заказ"""
+        # Ждем, пока кнопка станет кликабельной
+        self.wait_for_order_button_active()
         self.click_element(MainPageLocators.CREATE_ORDER_BUTTON)
+
+    @allure.step("Ожидать активации кнопки заказа")
+    def wait_for_order_button_active(self, timeout=10):
+        """Ожидать, пока кнопка создания заказа станет активной"""
+        return WebDriverWait(self.driver, timeout).until(
+            EC.element_to_be_clickable(MainPageLocators.CREATE_ORDER_BUTTON)
+        )
 
     @allure.step("Ожидать создания заказа")
     def wait_for_order_created(self, timeout=15):
@@ -104,4 +115,4 @@ class MainPage(BasePage):
         """Проверить, что находимся на главной странице"""
         return self.is_element_visible(MainPageLocators.BUN_TAB)
     
-
+    

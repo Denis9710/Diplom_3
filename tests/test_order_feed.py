@@ -1,9 +1,10 @@
+"""Тесты ленты заказов Stellar Burgers"""
+
 import allure
 import pytest
 from pages.feed_page import FeedPage
 from pages.main_page import MainPage
 from urls import PAGES
-from locators.main_page_locators import MainPageLocators
 
 
 @allure.feature("Лента заказов")
@@ -32,9 +33,13 @@ class TestOrderFeed:
 
         # Создаём заказ через UI
         main_page.open_main_page(PAGES["main"])
-        main_page.drag_ingredient_to_constructor()
+        
+        # Добавляем полный набор ингредиентов
+        main_page.add_full_ingredients_set()
+        
         main_page.create_order()
         main_page.wait_for_order_created()
+        main_page.close_order_modal()
 
         # Возвращаемся на ленту заказов и проверяем счётчик
         feed_page.open_feed_page(PAGES["feed"])
@@ -67,9 +72,13 @@ class TestOrderFeed:
 
         # Создаём заказ через UI
         main_page.open_main_page(PAGES["main"])
-        main_page.drag_ingredient_to_constructor()
+        
+        # Добавляем полный набор ингредиентов
+        main_page.add_full_ingredients_set()
+        
         main_page.create_order()
         main_page.wait_for_order_created()
+        main_page.close_order_modal()
 
         # Возвращаемся на ленту заказов и проверяем счётчик
         feed_page.open_feed_page(PAGES["feed"])
@@ -99,7 +108,10 @@ class TestOrderFeed:
 
         # Создаём заказ через UI
         main_page.open_main_page(PAGES["main"])
-        main_page.drag_ingredient_to_constructor()
+        
+        # Добавляем полный набор ингредиентов
+        main_page.add_full_ingredients_set()
+        
         main_page.create_order()
         order_number = main_page.get_order_number()
         main_page.close_order_modal()
